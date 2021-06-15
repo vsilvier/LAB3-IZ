@@ -52,17 +52,16 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
-import cv2
 
 ## функция для оброботки изображения 
 def draw(filename,cho):
  ##открываем изображение 
  print(filename)
- img= cv2.imread(filename)
+ img= Image.open(filename)
  x, y = img.size
  cho=int(cho)
  
- ##делаем график
+##делаем график
  fig = plt.figure(figsize=(6, 4))
  ax = fig.add_subplot()
  data = np.random.randint(0, 255, (100, 100))
@@ -74,23 +73,25 @@ def draw(filename,cho):
  #plt.show()
  plt.savefig(gr_path)
  plt.close()
- 
- 
- 
-##меняем контраст
- 
- def apply_contrast(input_img, contrast = 0):
-    
-    if contrast != 0:
-        f = 131*(contrast + 127)/(127*(131-contrast))
-        alpha_c = f
-        gamma_c = 127*(1-f)
-        
-        buf = cv2.addWeighted(buf, alpha_c, buf, 0, gamma_c)
 
-    return buf
- 
- 
+
+##меняем половинки
+ if cho==1: 
+  a = img.crop((0, 0, int(y * 0.5), x))
+  b = img.crop((int(y * 0.5), 0, x, y))
+  img.paste(b, (0, 0))
+  img.paste(a, (int(x * 0.5), 0))
+  output_filename = filename
+  img.save(output_filename)
+ else:
+  img=img.rotate(90)
+  a = img.crop((0, 0, int(y * 0.5), x))
+  b = img.crop((int(y * 0.5), 0, x, y))
+  img.paste(b, (0, 0))
+  img.paste(a, (int(y * 0.5), 0))
+  img=img.rotate(270)
+  output_filename = filename
+  img.save(output_filename)
  return output_filename,gr_path
 
 
