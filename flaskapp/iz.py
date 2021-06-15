@@ -32,7 +32,8 @@ class NetForm(FlaskForm):
  # валидатор проверяет введение данных после нажатия кнопки submit
  # и указывает пользователю ввести данные если они не введены
  # или неверны
- cho = StringField('1-изменить по вертикали,2-по горизонтали', validators = [DataRequired()])
+ #rcolor = 0
+ knopka = StringField('Выберите уровень контраста картинки', validators = [DataRequired()])
  # поле загрузки файла
  # здесь валидатор укажет ввести правильные файлы
  upload = FileField('Load image', validators=[
@@ -54,14 +55,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 ## функция для оброботки изображения 
-def draw(filename,cho):
+
+def draw(filename,knopka):
  ##открываем изображение 
  print(filename)
  img= Image.open(filename)
- x, y = img.size
- cho=int(cho)
- 
-##делаем график
+
+##рисуем первый график
  fig = plt.figure(figsize=(6, 4))
  ax = fig.add_subplot()
  data = np.random.randint(0, 255, (100, 100))
@@ -73,27 +73,36 @@ def draw(filename,cho):
  #plt.show()
  plt.savefig(gr_path)
  plt.close()
+ 
 
 
-##меняем половинки
- if cho==1: 
-  a = img.crop((0, 0, int(y * 0.5), x))
-  b = img.crop((int(y * 0.5), 0, x, y))
-  img.paste(b, (0, 0))
-  img.paste(a, (int(x * 0.5), 0))
-  output_filename = filename
-  img.save(output_filename)
- else:
-  img=img.rotate(90)
-  a = img.crop((0, 0, int(y * 0.5), x))
-  b = img.crop((int(y * 0.5), 0, x, y))
-  img.paste(b, (0, 0))
-  img.paste(a, (int(y * 0.5), 0))
-  img=img.rotate(270)
-  output_filename = filename
-  img.save(output_filename)
- return output_filename,gr_path
+ knopka=float(knopka)
+ 
+ img= np.array(img.resize((height,width)))/255.0
+ 
+ img[:,:,:] = knopka
 
+##сохраняем новое изображение
+ img = Image.fromarray((img * 255).astype(np.uint8))
+ print(img)
+ #img = Image.fromarray(img)
+ new_path = "./static/new.png"
+ print(img)
+ img.save(new_path)
+ return new_path, gr_path
+
+ ##рисуем второй график
+ fig = plt.figure(figsize=(6, 4))
+ ax = fig.add_subplot()
+ data = np.random.randint(0, 255, (100, 100))
+ ax.imshow(img, cmap='plasma')
+ b = ax.pcolormesh(data, edgecolors='black', cmap='plasma')
+ fig.colorbar(b, ax=ax)
+ gr_path = "./static/newgr.png"
+ sns.displot(data)
+ #plt.show()
+ plt.savefig(gr_path)
+ plt.close()
 
 
 # метод обработки запроса GET и POST от клиента
@@ -109,10 +118,11 @@ def net():
  if form.validate_on_submit():
   # файлы с изображениями читаются из каталога static
   filename = os.path.join('./static', secure_filename(form.upload.data.filename))
-  ch=form.cho.data
  
+  sz=form.knopka.data
+  
   form.upload.data.save(filename)
-  newfilename,grname = draw(filename,ch)
+  newfilename, grname = draw(filename,sz)
  # передаем форму в шаблон, так же передаем имя файла и результат работы нейронной
  # сети если был нажат сабмит, либо передадим falsy значения
  
