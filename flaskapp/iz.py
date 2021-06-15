@@ -93,17 +93,17 @@ def draw(filename,knopka):
  return new_path, gr_path
 
  ##рисуем второй график
- fig = plt.figure(figsize=(6, 4))
- ax = fig.add_subplot()
- data = np.random.randint(0, 255, (100, 100))
- ax.imshow(img, cmap='plasma')
- b = ax.pcolormesh(data, edgecolors='black', cmap='plasma')
- fig.colorbar(b, ax=ax)
- gr_path = "./static/newgr.png"
- sns.displot(data)
+ ##fig = plt.figure(figsize=(6, 4))
+ ##ax = fig.add_subplot()
+ ##data = np.random.randint(0, 255, (100, 100))
+ ##ax.imshow(img, cmap='plasma')
+ #b = ax.pcolormesh(data, edgecolors='black', cmap='plasma')
+ #fig.colorbar(b, ax=ax)
+ #gr_path = "./static/newgr.png"
+ #sns.displot(data)
  #plt.show()
- plt.savefig(gr_path)
- plt.close()
+ #plt.savefig(gr_path)
+ #plt.close()
 
 
 # метод обработки запроса GET и POST от клиента
