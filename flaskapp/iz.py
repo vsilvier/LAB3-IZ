@@ -77,7 +77,8 @@ def draw(filename,knopka):
 
 
  knopka=float(knopka)
- 
+ height = 225
+ width = 225
  img= np.array(img.resize((height,width)))/255.0
  
  img[:,:,:] = knopka
